@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AQI Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🌱 AQI Tracker
+    </div>
+
+    <nav>
+
+        <a href="/">Home</a>
+        <a href="/aqi">Dashboard</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/history">History</a>
+        <a href="/about">About</a>
+
+    </nav>
+
+</header>
+
+
+
+<section class="hero">
+
+    <h1>📊 AQI Dashboard</h1>
+
+    <p>
+        View the latest air quality information.
+    </p>
+
+</section>
+
+
+
+<section class="info">
+
+
+{% if reading %}
+
+    <h2>Latest Air Quality</h2>
+
+
+    <!-- LOCATION -->
+
+    <div class="card">
+
+        <h3>📍 Location</h3>
+
+        <h2>
+            {{ reading.location }}
+        </h2>
+
+    </div>
+
+
+
+    <!-- AQI -->
+
+    <div class="card">
+
+        <h3>🌍 Air Quality Index</h3>
+
+        <div class="aqi-number"
+             id="aqiNumber">
+
+            {{ reading.aqi }}
+
+        </div>
+
+        <div class="aqi-status"
+             id="aqiStatus">
+
+            {{ reading.status }}
+
+        </div>
+
+        <p>
+            Latest recorded AQI
+        </p>
+
+    </div>
+
+
+
+    <h2>Pollutant Levels</h2>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>PM2.5</h3>
+
+            <h2>
+                {{ reading.pm25 }}
+            </h2>
+
+            <p>
+                Fine particulate matter
+            </p>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h3>PM10</h3>
+
+            <h2>
+                {{ reading.pm10 }}
+            </h2>
+
+            <p>
+                Particulate matter
+            </p>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h3>NO₂</h3>
+
+            <h2>
+                {{ reading.no2 }}
+            </h2>
+
+            <p>
+                Nitrogen dioxide
+            </p>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h3>CO</h3>
+
+            <h2>
+                {{ reading.co }}
+            </h2>
+
+            <p>
+                Carbon monoxide
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- RECOMMENDATION -->
+
+    <div class="card">
+
+        <h2>💡 Recommendation</h2>
+
+        <p>
+            {{ reading.recommendation }}
+        </p>
+
+    </div>
+
+
+{% else %}
+
+    <div class="card">
+
+        <h2>📊 No AQI Data Yet</h2>
+
+        <p>
+            Search for a city from the homepage to see
+            its latest AQI information here.
+        </p>
+
+        <br>
+
+        <a href="/">
+
+            <button>
+                🔍 Search a City
+            </button>
+
+        </a>
+
+    </div>
+
+{% endif %}
+
+
+</section>
+
+
+
+<footer>
+
+    <p>
+        © 2026 AQI Tracker
+    </p>
+
+    <p>
+        Developed by Urvashi Narwat & Sanchit Tanwar
+    </p>
+
+    <p>
+        B.Tech CSE Mini Project
+    </p>
+
+</footer>
+
+
+
+<!-- AQI COLOR -->
+
+<script>
+
+const aqiNumber =
+    document.getElementById("aqiNumber");
+
+const aqiStatus =
+    document.getElementById("aqiStatus");
+
+
+if (aqiNumber && aqiStatus) {
+
+    const aqi =
+        Number(aqiNumber.textContent.trim());
+
+
+    if (aqi <= 50) {
+
+        aqiNumber.style.color = "#16a34a";
+        aqiStatus.style.color = "#16a34a";
+
+    }
+
+    else if (aqi <= 100) {
+
+        aqiNumber.style.color = "#ca8a04";
+        aqiStatus.style.color = "#ca8a04";
+
+    }
+
+    else if (aqi <= 150) {
+
+        aqiNumber.style.color = "#ea580c";
+        aqiStatus.style.color = "#ea580c";
+
+    }
+
+    else if (aqi <= 200) {
+
+        aqiNumber.style.color = "#dc2626";
+        aqiStatus.style.color = "#dc2626";
+
+    }
+
+    else if (aqi <= 300) {
+
+        aqiNumber.style.color = "#7c3aed";
+        aqiStatus.style.color = "#7c3aed";
+
+    }
+
+    else {
+
+        aqiNumber.style.color = "#78350f";
+        aqiStatus.style.color = "#78350f";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
