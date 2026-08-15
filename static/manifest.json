@@ -1,0 +1,17 @@
+{
+  "name": "AQI Tracker - Personal Air Quality Monitoring System",
+  "short_name": "AQI Tracker",
+  "description": "Monitor air quality, AQI levels and pollutant information.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
