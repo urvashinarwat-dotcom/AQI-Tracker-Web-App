@@ -1,0 +1,4 @@
+Flask
+Flask-SQLALchemy
+requests
+gunicorn
