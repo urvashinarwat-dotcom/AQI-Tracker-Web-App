@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AQI Tracker | Air Quality Monitoring System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🌱 AQI Tracker
+    </div>
+
+    <nav>
+
+        <a href="/">Home</a>
+        <a href="/aqi">Dashboard</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/history">History</a>
+        <a href="/about">About</a>
+
+    </nav>
+
+</header>
+
+
+
+<!-- PROFESSIONAL PROJECT TITLE -->
+
+<section class="hero">
+
+    <h1>🌱 AQI Tracker</h1>
+
+    <h2>
+        Personal Air Quality Monitoring System
+    </h2>
+
+    <p>
+        A Python & Flask Based Web Application
+    </p>
+
+    <p>
+        Developed by
+        <strong>Urvashi Narwat & Sanchit Tanwar</strong>
+    </p>
+
+    <p>
+        B.Tech Computer Science & Engineering
+    </p>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="city"
+            placeholder="Enter city name"
+        >
+
+        <button onclick="searchAQI()">
+            🔍 Search AQI
+        </button>
+
+    </div>
+
+    <p id="message"></p>
+
+</section>
+
+
+
+<!-- FEATURES -->
+
+<section class="info">
+
+    <h2>Why Track Air Quality?</h2>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>🌍 Monitor AQI</h3>
+
+            <p>
+                Check the air quality of different cities
+                and stay informed about pollution levels.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>📊 View Pollution Data</h3>
+
+            <p>
+                Understand pollutants such as PM2.5,
+                PM10, NO₂ and CO.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>💡 Get Recommendations</h3>
+
+            <p>
+                Get useful recommendations based on
+                the current AQI level.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>
+        © 2026 AQI Tracker
+    </p>
+
+    <p>
+        Developed by Urvashi Narwat & Sanchit Tanwar
+    </p>
+
+    <p>
+        B.Tech CSE Mini Project
+    </p>
+
+</footer>
+
+
+
+<!-- SEARCH SCRIPT -->
+
+<script>
+
+async function searchAQI() {
+
+    const city =
+        document.getElementById("city").value.trim();
+
+    const message =
+        document.getElementById("message");
+
+
+    if (!city) {
+
+        message.textContent =
+            "Please enter a city name.";
+
+        return;
+    }
+
+
+    message.textContent =
+        "Loading AQI...";
+
+
+    try {
+
+        const response = await fetch("/search", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                city: city
+            })
+
+        });
+
+
+        const data =
+            await response.json();
+
+
+        if (data.success) {
+
+            window.location.href =
+                `/results?city=${encodeURIComponent(data.location)}` +
+                `&aqi=${data.aqi}` +
+                `&status=${encodeURIComponent(data.status)}` +
+                `&pm25=${data.pm25}` +
+                `&pm10=${data.pm10}` +
+                `&no2=${data.no2}` +
+                `&co=${data.co}` +
+                `&recommendation=${encodeURIComponent(data.recommendation)}`;
+
+        }
+
+        else {
+
+            message.textContent =
+                data.message;
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "Unable to fetch AQI data. Please try again.";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
