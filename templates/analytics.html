@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AQI Analytics</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🌱 AQI Tracker
+    </div>
+
+    <nav>
+
+        <a href="/">Home</a>
+
+        <a href="/aqi">Dashboard</a>
+
+        <a href="/analytics">Analytics</a>
+
+        <a href="/history">History</a>
+
+        <a href="/about">About</a>
+
+    </nav>
+
+</header>
+
+
+
+<section class="hero">
+
+    <h1>📈 AQI Analytics</h1>
+
+    <p>
+        Understand air quality levels and pollution categories.
+    </p>
+
+</section>
+
+
+
+<section class="info">
+
+
+    <h2>AQI Categories</h2>
+
+
+    <div class="cards">
+
+
+        <!-- GOOD -->
+
+        <div class="card">
+
+            <h3 style="color: #16a34a;">
+                🟢 Good
+            </h3>
+
+            <h2>0 - 50</h2>
+
+            <p>
+                Air quality is considered good.
+                Outdoor activities are generally suitable.
+            </p>
+
+        </div>
+
+
+
+        <!-- MODERATE -->
+
+        <div class="card">
+
+            <h3 style="color: #ca8a04;">
+                🟡 Moderate
+            </h3>
+
+            <h2>51 - 100</h2>
+
+            <p>
+                Air quality is acceptable, although
+                sensitive people may experience effects.
+            </p>
+
+        </div>
+
+
+
+        <!-- SENSITIVE -->
+
+        <div class="card">
+
+            <h3 style="color: #ea580c;">
+                🟠 Unhealthy for Sensitive Groups
+            </h3>
+
+            <h2>101 - 150</h2>
+
+            <p>
+                Sensitive individuals should consider
+                reducing prolonged outdoor activities.
+            </p>
+
+        </div>
+
+
+
+        <!-- UNHEALTHY -->
+
+        <div class="card">
+
+            <h3 style="color: #dc2626;">
+                🔴 Unhealthy
+            </h3>
+
+            <h2>151 - 200</h2>
+
+            <p>
+                Everyone may begin to experience
+                health effects.
+            </p>
+
+        </div>
+
+
+
+        <!-- VERY UNHEALTHY -->
+
+        <div class="card">
+
+            <h3 style="color: #7c3aed;">
+                🟣 Very Unhealthy
+            </h3>
+
+            <h2>201 - 300</h2>
+
+            <p>
+                Health alert conditions may affect
+                everyone.
+            </p>
+
+        </div>
+
+
+
+        <!-- HAZARDOUS -->
+
+        <div class="card">
+
+            <h3 style="color: #78350f;">
+                🟤 Hazardous
+            </h3>
+
+            <h2>301+</h2>
+
+            <p>
+                Health warnings of emergency conditions.
+                Everyone is likely to be affected.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <br>
+
+
+    <h2>📊 Example AQI Analysis</h2>
+
+
+    <div class="card">
+
+        <h3>Delhi</h3>
+
+        <div class="aqi-number">
+            156
+        </div>
+
+        <div class="aqi-status"
+             style="color: #dc2626;">
+
+            UNHEALTHY
+
+        </div>
+
+        <p>
+            The example reading falls within the
+            unhealthy AQI category.
+        </p>
+
+    </div>
+
+
+
+    <br>
+
+
+    <h2>💡 How to Read AQI</h2>
+
+
+    <div class="card">
+
+        <p>
+            A lower AQI value generally indicates
+            better air quality, while a higher value
+            indicates greater levels of air pollution.
+        </p>
+
+        <p>
+            Use the AQI category and pollutant readings
+            together to understand the overall air quality.
+        </p>
+
+    </div>
+
+
+</section>
+
+
+
+<footer>
+
+    <p>
+        © 2026 AQI Tracker
+    </p>
+
+    <p>
+        Developed by Urvashi Narwat & Sanchit Tanwar
+    </p>
+
+    <p>
+        B.Tech CSE Mini Project
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>
