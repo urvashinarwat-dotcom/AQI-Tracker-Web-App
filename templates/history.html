@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AQI History - AQI Tracker</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Main history area */
+
+        .history-container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 40px auto;
+        }
+
+
+        /* History card */
+
+        .history-card {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .history-card h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+
+        /* Table wrapper */
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+
+        /* Table */
+
+        table {
+            width: 100%;
+            min-width: 900px;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+
+
+        /* Table heading */
+
+        th {
+            background: #f1f5f9;
+            padding: 16px 12px;
+            text-align: center;
+            font-weight: bold;
+            white-space: nowrap;
+            border-bottom: 2px solid #d1d5db;
+        }
+
+
+        /* Table cells */
+
+        td {
+            padding: 15px 12px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+
+        /* Hover effect */
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+
+        /* AQI number */
+
+        .aqi-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        /* AQI status */
+
+        .status {
+            font-weight: bold;
+        }
+
+
+        /* Empty history */
+
+        .no-history {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+        }
+
+
+        /* Search button */
+
+        .search-button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 22px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+
+        .search-button:hover {
+            opacity: 0.9;
+        }
+
+
+        /* Mobile */
+
+        @media (max-width: 900px) {
+
+            .history-container {
+                width: 94%;
+            }
+
+            .history-card {
+                padding: 15px;
+            }
+
+            th,
+            td {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+    <div class="logo">
+        🌱 AQI Tracker
+    </div>
+
+
+    <nav>
+
+        <a href="/">Home</a>
+
+        <a href="/aqi">Dashboard</a>
+
+        <a href="/analytics">Analytics</a>
+
+        <a href="/history">History</a>
+
+        <a href="/about">About</a>
+
+    </nav>
+
+</header>
+
+
+
+<!-- PAGE TITLE -->
+
+<section class="hero">
+
+    <h1>🕒 Search History</h1>
+
+    <p>
+        View your previously searched AQI readings.
+    </p>
+
+</section>
+
+
+
+<!-- HISTORY -->
+
+<div class="history-container">
+
+    <div class="history-card">
+
+        <h2>
+            📊 Previous AQI Searches
+        </h2>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>City</th>
+
+                        <th>AQI</th>
+
+                        <th>Status</th>
+
+                        <th>PM2.5</th>
+
+                        <th>PM10</th>
+
+                        <th>NO₂</th>
+
+                        <th>CO</th>
+
+                        <th>Date & Time</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="historyTable">
+
+                    <tr>
+
+                        <td colspan="8">
+
+                            Loading history...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div style="text-align: center;">
+
+            <a href="/"
+               class="search-button">
+
+                🔍 Search Another City
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>
+        © 2026 AQI Tracker
+    </p>
+
+    <p>
+        Developed by Urvashi Narwat & Sanchit Tanwar
+    </p>
+
+    <p>
+        B.Tech CSE Mini Project
+    </p>
+
+</footer>
+
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+async function loadHistory() {
+
+    const table =
+        document.getElementById("historyTable");
+
+
+    try {
+
+        const response =
+            await fetch("/api/history");
+
+
+        const data =
+            await response.json();
+
+
+        /* Check response */
+
+        if (!data.success) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td colspan="8">
+
+                        Unable to load history.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* No history */
+
+        if (!data.readings ||
+            data.readings.length === 0) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td colspan="8"
+                        class="no-history">
+
+                        🕒 No AQI searches yet.
+
+                        <br><br>
+
+                        Search a city from the homepage first.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* Clear loading message */
+
+        table.innerHTML = "";
+
+
+        /* Add readings */
+
+        data.readings.forEach(function(reading) {
+
+
+            let statusColor = "#333";
+
+
+            const aqi =
+                Number(reading.aqi);
+
+
+            /* AQI colors */
+
+            if (aqi <= 50) {
+
+                statusColor = "#16a34a";
+
+            }
+
+            else if (aqi <= 100) {
+
+                statusColor = "#ca8a04";
+
+            }
+
+            else if (aqi <= 150) {
+
+                statusColor = "#ea580c";
+
+            }
+
+            else if (aqi <= 200) {
+
+                statusColor = "#dc2626";
+
+            }
+
+            else if (aqi <= 300) {
+
+                statusColor = "#7c3aed";
+
+            }
+
+            else {
+
+                statusColor = "#78350f";
+
+            }
+
+
+            /* Create row */
+
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${reading.location || "N/A"}
+                </td>
+
+
+                <td class="aqi-value"
+                    style="color: ${statusColor};">
+
+                    ${reading.aqi || "N/A"}
+
+                </td>
+
+
+                <td class="status"
+                    style="color: ${statusColor};">
+
+                    ${reading.status || "N/A"}
+
+                </td>
+
+
+                <td>
+                    ${reading.pm25 || "N/A"}
+                </td>
+
+
+                <td>
+                    ${reading.pm10 || "N/A"}
+                </td>
+
+
+                <td>
+                    ${reading.no2 || "N/A"}
+                </td>
+
+
+                <td>
+                    ${reading.co || "N/A"}
+                </td>
+
+
+                <td>
+                    ${reading.timestamp || "N/A"}
+                </td>
+
+            `;
+
+
+            table.appendChild(row);
+
+        });
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "History error:",
+            error
+        );
+
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td colspan="8"
+                    class="no-history">
+
+                    ❌ Error loading AQI history.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* Load history when page opens */
+
+loadHistory();
+
+</script>
+
+
+</body>
+
+</html>
