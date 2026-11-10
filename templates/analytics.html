@@ -12,7 +12,7 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 
@@ -57,7 +57,48 @@
 
 <section class="info">
 
+<h2>📊 Historical AQI Analysis</h2>
 
+<div class="card">
+
+    <form method="GET" action="/analytics">
+
+        <label for="city">Select Location:</label>
+
+        <select name="city" id="city"
+                onchange="this.form.submit()">
+
+            <option value="">All Locations</option>
+
+            {% for location in locations %}
+
+            <option value="{{ location }}"
+                {% if selected_city == location %}selected{% endif %}>
+
+                {{ location }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </form>
+
+    <h3>AQI Changes Over Time</h3>
+
+    <canvas id="aqiChart"></canvas>
+
+    {% if not values %}
+
+    <p>
+        No historical readings available yet.
+        Search for cities to start collecting data.
+    </p>
+
+    {% endif %}
+
+</div>
     <h2>AQI Categories</h2>
 
 
@@ -253,7 +294,76 @@
 
 </footer>
 
+<script>
 
+const labels = {{ labels | tojson }};
+const values = {{ values | tojson }};
+
+const ctx = document.getElementById('aqiChart');
+
+new Chart(ctx, {
+
+    type: 'line',
+
+    data: {
+
+        labels: labels,
+
+        datasets: [{
+
+            label: 'Air Quality Index (AQI)',
+
+            data: values,
+
+            borderWidth: 3,
+
+            tension: 0.3,
+
+            fill: false
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                title: {
+
+                    display: true,
+
+                    text: 'AQI Value'
+
+                }
+
+            },
+
+            x: {
+
+                title: {
+
+                    display: true,
+
+                    text: 'Date'
+
+                }
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
 </body>
 
 </html>
