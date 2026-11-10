@@ -95,7 +95,14 @@ def aqi():
 
 @app.route("/analytics")
 def analytics():
-    return render_template("analytics.html")
+    readings = AQIReading.query.order_by(
+        AQIReading.timestamp.asc()
+    ).all()
+
+    return render_template(
+        "analytics.html",
+        readings=[reading.to_dict() for reading in readings]
+    )
 
 @app.route("/about")
 def about():
