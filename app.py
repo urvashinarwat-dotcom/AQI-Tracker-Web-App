@@ -95,13 +95,38 @@ def aqi():
 
 @app.route("/analytics")
 def analytics():
-    readings = AQIReading.query.order_by(
+    city = request.args.get("city", "").strip()
+
+    query = AQIReading.query
+
+    if city:
+        query = query.filter(
+            AQIReading.location.ilike(f"%{city}%")
+        )
+
+    readings = query.order_by(
         AQIReading.timestamp.asc()
     ).all()
 
+    locations = db.session.query(
+        AQIReading.location
+    ).distinct().all()
+
+    labels = [
+        reading.timestamp.strftime("%d %b %Y")
+        for reading in readings
+    ]
+
+    values = [
+        reading.aqi for reading in readings
+    ]
+
     return render_template(
         "analytics.html",
-        readings=[reading.to_dict() for reading in readings]
+        labels=labels,
+        values=values,
+        locations=[item[0] for item in locations],
+        selected_city=city
     )
 
 @app.route("/about")
