@@ -113,37 +113,7 @@ def search():
                 'success': False,
                 'message': 'Please enter a valid city name'
             }), 400
-        
-        # Try to get data from mock data first (for demo purposes)
-        if city in MOCK_AQI_DATA:
-            logger.info(f"Using mock data for city: {city}")
-            aqi_data = MOCK_AQI_DATA[city]
-            recommendation = get_recommendation(aqi_data['aqi'])
             
-            # Save to database
-            save_aqi_reading(
-                aqi_data['location'],
-                aqi_data['aqi'],
-                aqi_data['status'],
-                aqi_data['pm25'],
-                aqi_data['pm10'],
-                aqi_data['no2'],
-                aqi_data['co'],
-                recommendation
-            )
-            
-            return jsonify({
-                'success': True,
-                'location': aqi_data['location'],
-                'aqi': aqi_data['aqi'],
-                'status': aqi_data['status'],
-                'pm25': aqi_data['pm25'],
-                'pm10': aqi_data['pm10'],
-                'no2': aqi_data['no2'],
-                'co': aqi_data['co'],
-                'recommendation': recommendation
-            })
-        
         # Try to fetch from real API
         logger.info(f"Fetching API data for city: {city}")
         aqi_data = fetch_from_api(city)
@@ -199,10 +169,18 @@ def fetch_from_api(city):
         dict: AQI data or None if request fails
     """
     try:
-        api_url = f'https://api.waqi.info/feed/{city}/?token=demo'
+        token = os.environ.get("WAQI_TOKEN")
+        if not token:
+            logger.error("WAQI_TOKEN is missing")
+            return None
+        api_url = f'https://api.waqi.info/feed/{city}/'
         
         # Make request with timeout
-        response = session.get(api_url, timeout=5)
+        response = session.get(
+            api_url,
+            params={"token": token},
+            timeout=15
+        )
         response.raise_for_status()  # Raise exception for bad status codes
         
         api_data = response.json()
