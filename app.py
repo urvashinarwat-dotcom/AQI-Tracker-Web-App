@@ -204,7 +204,8 @@ def fetch_from_api(city):
         co = pollutants.get('co', {}).get('v', 'N/A')
         
         # Extract location name
-        location_name = api_data['data'].get('city', {}).get('name', city)
+        station_name = api_data['data'].get('city', {}).get('name', city)
+        location_name = f"{station_name} (Search: {city.title()})"
         
         logger.info(f"Successfully fetched AQI data for {location_name}: {aqi_value}")
         
