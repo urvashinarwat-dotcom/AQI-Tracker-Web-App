@@ -231,10 +231,11 @@ def fetch_from_api(city):
         
         # Extract pollutant data
         pollutants = api_data['data'].get('iaqi', {})
-        pm25 = pollutants.get('pm25', {}).get('v', 'N/A')
-        pm10 = pollutants.get('pm10', {}).get('v', 'N/A')
-        no2 = pollutants.get('no2', {}).get('v', 'N/A')
-        co = pollutants.get('co', {}).get('v', 'N/A')
+        
+        pm25 = pollutants.get('pm25', {}).get('v')
+        pm10 = pollutants.get('pm10', {}).get('v')
+        no2 = pollutants.get('no2', {}).get('v')
+        co = pollutants.get('co', {}).get('v')
         
         # Extract location name
         station_name = api_data['data'].get('city', {}).get('name', city)
