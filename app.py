@@ -154,7 +154,7 @@ def search():
             recommendation = get_recommendation(aqi_data['aqi'])
             
             # Save to database
-            save_aqi_reading(
+            saved = save_aqi_reading(
                 aqi_data['location'],
                 aqi_data['aqi'],
                 aqi_data['status'],
@@ -164,6 +164,8 @@ def search():
                 aqi_data['co'],
                 recommendation
             )
+
+logger.info(f"Database save result: {saved}")
             
             return jsonify({
                 'success': True,
