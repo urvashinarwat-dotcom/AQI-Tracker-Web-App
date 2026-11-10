@@ -103,6 +103,15 @@
         .chart-container {
             position: relative;
             height: 350px;
+             margin: 15px auto;
+        }
+        .chart-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-top: 22px;
+            width: 100%;
+            overflow: hidden;
         }
 
         .error {
@@ -239,6 +248,14 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -258,22 +275,22 @@
                 datasets: [
                     {
                         label: 'PM2.5',
-                        data: cities.map(city => city.pm25),
+                        data: cities.map(city => city.pm25 ?? null),
                         backgroundColor: '#16a34a'
                     },
                     {
                         label: 'PM10',
-                        data: cities.map(city => city.pm10),
+                        data: cities.map(city => city.pm10 ?? null),
                         backgroundColor: '#3b82f6'
                     },
                     {
                         label: 'NO2',
-                        data: cities.map(city => city.no2),
+                        data: cities.map(city => city.no2 ?? null),
                         backgroundColor: '#f59e0b'
                     },
                     {
                         label: 'CO',
-                        data: cities.map(city => city.co),
+                        data: cities.map(city => city.co ?? null),
                         backgroundColor: '#8b5cf6'
                     }
                 ]
