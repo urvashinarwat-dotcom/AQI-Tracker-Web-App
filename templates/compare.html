@@ -231,6 +231,12 @@
 
     <script>
         const cities = {{ cities_data | tojson }};
+        console.log("City comparison data:", cities);
+        
+        console.log(
+            "AQI values:",
+            cities.map(city => city.aqi)
+        );
 
         const labels = cities.map(city => city.location);
 
