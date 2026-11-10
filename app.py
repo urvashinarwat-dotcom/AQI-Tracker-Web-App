@@ -128,6 +128,39 @@ def analytics():
         locations=[item[0] for item in locations],
         selected_city=city
     )
+    @app.route("/compare", methods=["GET", "POST"])
+    def compare():
+        cities_data = []
+        errors = []
+        
+        if request.method == "POST":
+            cities_input = request.form.get("cities", "")
+
+            cities = list(dict.fromkeys(
+                city.strip()
+                for city in cities_input.split(",")
+                if city.strip()
+            ))
+            
+            if len(cities) < 2:
+                errors.append("Please enter at least two cities.")
+            
+            else:
+                for city in cities:
+                    aqi_data = fetch_from_api(city)
+                    
+                    if aqi_data:
+                        cities_data.append(aqi_data)
+                    else:
+                        errors.append(
+                            f"Could not fetch AQI data for {city}."
+                        )
+                        
+        return render_template(
+            "compare.html",
+            cities_data=cities_data,
+            errors=errors
+        )
 
 @app.route("/about")
 def about():
