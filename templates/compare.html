@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Comparison | AQI Tracker</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0fdf4;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 25px 10px;
+        }
+
+        header h1 {
+            color: #15803d;
+            margin-bottom: 8px;
+        }
+
+        .card, .form-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #15803d;
+        }
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+        }
+
+        .city-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-top: 5px solid #16a34a;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .aqi-number {
+            font-size: 34px;
+            font-weight: bold;
+            color: #15803d;
+            margin: 10px 0;
+        }
+
+        .pollutants {
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-top: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 10px;
+        }
+
+        .note {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #15803d;
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <header>
+        <h1>🌍 City AQI Comparison</h1>
+        <p>Compare air quality readings across multiple cities.</p>
+        <a href="/">← Back to Home</a>
+    </header>
+
+    <div class="form-card">
+        <h2>Enter Cities</h2>
+
+        <form method="POST" action="/compare">
+            <label for="cities">
+                Enter city names separated by commas:
+            </label>
+
+            <input
+                type="text"
+                id="cities"
+                name="cities"
+                placeholder="Delhi, Mumbai, London, Tokyo"
+                required
+            >
+
+            <button type="submit">Compare AQI</button>
+        </form>
+    </div>
+
+    {% for error in errors %}
+    <div class="error">{{ error }}</div>
+    {% endfor %}
+
+    {% if cities_data %}
+
+    <h2>📊 City Comparison Results</h2>
+
+    <div class="city-grid">
+
+        {% for city in cities_data %}
+        <div class="city-card">
+
+            <h3>{{ city.location }}</h3>
+
+            <div class="aqi-number">
+                {{ city.aqi }}
+            </div>
+
+            <strong>{{ city.status }}</strong>
+
+            <hr>
+
+            <div class="pollutants">
+                <p>PM2.5: {{ city.pm25 if city.pm25 is not none else 'N/A' }}</p>
+                <p>PM10: {{ city.pm10 if city.pm10 is not none else 'N/A' }}</p>
+                <p>NO₂: {{ city.no2 if city.no2 is not none else 'N/A' }}</p>
+                <p>CO: {{ city.co if city.co is not none else 'N/A' }}</p>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="chart-card">
+        <h2>📈 AQI Comparison Graph</h2>
+        <div class="chart-container">
+            <canvas id="aqiChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h2>🧪 Pollutant Comparison Graph</h2>
+        <div class="chart-container">
+            <canvas id="pollutantChart"></canvas>
+        </div>
+        <p class="note">
+            Missing pollutant readings are shown as gaps in the graph.
+        </p>
+    </div>
+
+    <p class="note">
+        Note: These are readings from individual monitoring stations,
+        not necessarily city-wide averages. Readings may be recorded
+        at different times, so comparisons should be treated as indicative.
+    </p>
+
+    <script>
+        const cities = {{ cities_data | tojson }};
+
+        const labels = cities.map(city => city.location);
+
+        new Chart(document.getElementById('aqiChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'AQI',
+                    data: cities.map(city => city.aqi),
+                    backgroundColor: '#16a34a',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'AQI Value'
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('pollutantChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'PM2.5',
+                        data: cities.map(city => city.pm25),
+                        backgroundColor: '#16a34a'
+                    },
+                    {
+                        label: 'PM10',
+                        data: cities.map(city => city.pm10),
+                        backgroundColor: '#3b82f6'
+                    },
+                    {
+                        label: 'NO2',
+                        data: cities.map(city => city.no2),
+                        backgroundColor: '#f59e0b'
+                    },
+                    {
+                        label: 'CO',
+                        data: cities.map(city => city.co),
+                        backgroundColor: '#8b5cf6'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    {% endif %}
+
+    <footer>
+        <p>Air quality data provided by the World Air Quality Index Project (WAQI).</p>
+        <p>AQI Tracker | Air Quality Monitoring System</p>
+    </footer>
+
+</div>
+</body>
+</html>
