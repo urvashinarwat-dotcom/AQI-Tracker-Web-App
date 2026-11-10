@@ -113,6 +113,31 @@
             width: 100%;
             overflow: hidden;
         }
+        canvas {
+            display: block;
+            max-width: 100%;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                width: 100%;
+            }
+            
+            .chart-card {
+                padding: 10px;
+            }
+            
+            .chart-container {
+                height: 280px;
+            }
+            
+            .chart-card h2 {
+                font-size: 18px;
+            }
+        }
 
         .error {
             background: #fee2e2;
