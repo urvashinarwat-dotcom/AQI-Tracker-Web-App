@@ -164,8 +164,7 @@ def search():
                 aqi_data['co'],
                 recommendation
             )
-
-logger.info(f"Database save result: {saved}")
+            logger.info(f"Database save result: {saved}")
             
             return jsonify({
                 'success': True,
